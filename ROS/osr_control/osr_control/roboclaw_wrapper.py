@@ -44,26 +44,37 @@ class RoboclawWrapper(Node):
                 ('roboclaw_mapping.drive_left_front.channel', Parameter.Type.STRING),
                 ('roboclaw_mapping.drive_left_front.ticks_per_rev', Parameter.Type.INTEGER),
                 ('roboclaw_mapping.drive_left_front.gear_ratio', Parameter.Type.DOUBLE),
+                ('roboclaw_mapping.drive_left_front.encoder_modifier', Parameter.Type.INTEGER),
+
                 ('roboclaw_mapping.drive_left_middle.address', Parameter.Type.INTEGER),
                 ('roboclaw_mapping.drive_left_middle.channel', Parameter.Type.STRING),
                 ('roboclaw_mapping.drive_left_middle.ticks_per_rev', Parameter.Type.INTEGER),
                 ('roboclaw_mapping.drive_left_middle.gear_ratio', Parameter.Type.DOUBLE),
+                ('roboclaw_mapping.drive_left_middle.encoder_modifier', Parameter.Type.INTEGER),
+
                 ('roboclaw_mapping.drive_left_back.address', Parameter.Type.INTEGER),
                 ('roboclaw_mapping.drive_left_back.channel', Parameter.Type.STRING),
                 ('roboclaw_mapping.drive_left_back.ticks_per_rev', Parameter.Type.INTEGER),
                 ('roboclaw_mapping.drive_left_back.gear_ratio', Parameter.Type.DOUBLE),
+                ('roboclaw_mapping.drive_left_back.encoder_modifier', Parameter.Type.INTEGER),
+
                 ('roboclaw_mapping.drive_right_front.address', Parameter.Type.INTEGER),
                 ('roboclaw_mapping.drive_right_front.channel', Parameter.Type.STRING),
                 ('roboclaw_mapping.drive_right_front.ticks_per_rev', Parameter.Type.INTEGER),
                 ('roboclaw_mapping.drive_right_front.gear_ratio', Parameter.Type.DOUBLE),
+                ('roboclaw_mapping.drive_right_front.encoder_modifier', Parameter.Type.INTEGER), 
+
                 ('roboclaw_mapping.drive_right_middle.address', Parameter.Type.INTEGER),
                 ('roboclaw_mapping.drive_right_middle.channel', Parameter.Type.STRING),
                 ('roboclaw_mapping.drive_right_middle.ticks_per_rev', Parameter.Type.INTEGER),
                 ('roboclaw_mapping.drive_right_middle.gear_ratio', Parameter.Type.DOUBLE),
+                ('roboclaw_mapping.drive_right_middle.encoder_modifier', Parameter.Type.INTEGER), 
+
                 ('roboclaw_mapping.drive_right_back.address', Parameter.Type.INTEGER),
                 ('roboclaw_mapping.drive_right_back.channel', Parameter.Type.STRING),
                 ('roboclaw_mapping.drive_right_back.ticks_per_rev', Parameter.Type.INTEGER),
-                ('roboclaw_mapping.drive_right_back.gear_ratio', Parameter.Type.DOUBLE)
+                ('roboclaw_mapping.drive_right_back.gear_ratio', Parameter.Type.DOUBLE),
+                ('roboclaw_mapping.drive_right_back.encoder_modifier', Parameter.Type.INTEGER), 
             ]
         )
 
@@ -92,6 +103,25 @@ class RoboclawWrapper(Node):
         self.roboclaw_mapping["drive_right_front"]["gear_ratio"] = self.get_parameter('roboclaw_mapping.drive_right_front.gear_ratio').get_parameter_value().double_value
         self.roboclaw_mapping["drive_right_middle"]["gear_ratio"] = self.get_parameter('roboclaw_mapping.drive_right_middle.gear_ratio').get_parameter_value().double_value
         self.roboclaw_mapping["drive_right_back"]["gear_ratio"] = self.get_parameter('roboclaw_mapping.drive_right_back.gear_ratio').get_parameter_value().double_value
+
+        self.roboclaw_mapping["drive_left_front"]["encoder_modifier"] = self.get_parameter(
+            'roboclaw_mapping.drive_left_front.encoder_modifier').get_parameter_value().integer_value
+        self.roboclaw_mapping["drive_left_middle"]["encoder_modifier"] = self.get_parameter(
+            'roboclaw_mapping.drive_left_middle.encoder_modifier').get_parameter_value().integer_value
+        self.roboclaw_mapping["drive_left_back"]["encoder_modifier"] = self.get_parameter(
+            'roboclaw_mapping.drive_left_back.encoder_modifier').get_parameter_value().integer_value
+        self.roboclaw_mapping["drive_right_front"]["encoder_modifier"] = self.get_parameter(
+            'roboclaw_mapping.drive_right_front.encoder_modifier').get_parameter_value().integer_value
+        self.roboclaw_mapping["drive_right_middle"]["encoder_modifier"] = self.get_parameter(
+            'roboclaw_mapping.drive_right_middle.encoder_modifier').get_parameter_value().integer_value
+        self.roboclaw_mapping["drive_right_back"]["encoder_modifier"] = self.get_parameter(
+            'roboclaw_mapping.drive_right_back.encoder_modifier').get_parameter_value().integer_value
+
+        # Logging the encoder modifiers
+        self.get_logger().info("Encoder modifiers have been set:")
+        for motor_name in self.roboclaw_mapping:
+            modifier = self.roboclaw_mapping[motor_name]["encoder_modifier"]
+            self.get_logger().info(f"{motor_name}: encoder_modifier = {modifier}")
 
         self.encoder_limits = {}
         self.establish_roboclaw_connections()
@@ -238,12 +268,19 @@ class RoboclawWrapper(Node):
             position = self.read_encoder_position(properties["address"], properties["channel"])
             velocity = self.read_encoder_velocity(properties["address"], properties["channel"])
             current = self.read_encoder_current(properties["address"], properties["channel"])
-            enc_msg.position.append(self.tick2position(position,
+
+            modifier = properties.get("encoder_modifier", 1)
+
+            # Adjust position and velocity with the modifier
+            adjusted_position = position * modifier
+            adjusted_velocity = velocity * modifier
+
+            enc_msg.position.append(self.tick2position(adjusted_position,
                                                        self.encoder_limits[motor_name][0],
                                                        self.encoder_limits[motor_name][1],
                                                        properties['ticks_per_rev'],
                                                        properties['gear_ratio']))
-            enc_msg.velocity.append(self.qpps2velocity(velocity,
+            enc_msg.velocity.append(self.qpps2velocity(adjusted_velocity,
                                                        properties['ticks_per_rev'],
                                                        properties['gear_ratio']))
             enc_msg.effort.append(current)
