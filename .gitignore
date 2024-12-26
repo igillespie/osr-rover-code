@@ -1,6 +1,78 @@
-*.pyc
-.vscode
-ROS/osr_bringup/config/*_mod.yaml
-*.sublime-project
-*.sublime-workspace
+# General OS-specific files
 .DS_Store
+._*
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime files
+*.pid
+*.seed
+*.pid.lock
+
+# Directory-based caches
+.cache/
+.pnpm-store/
+.parcel-cache/
+
+# Dependency directories
+node_modules/
+bower_components/
+
+# Editor/IDE-specific files
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# Python
+*.pyc
+*.pyo
+__pycache__/
+*.egg
+*.egg-info/
+
+# ROS/ROS2 specific
+build/
+devel/
+install/
+log/
+ros_logs/
+*_msgs/
+
+# macOS-specific files
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# VS Code-specific
+.vscode/
+.vscode/settings.json
+.vscode/tasks.json
+.vscode/launch.json
+.vscode/*.code-workspace
+
+# Temporary files and folders
+*.tmp
+*.temp
+*.swp
+*.swo
+*.bak
+*~
+*.orig
+
+# Archive files
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# Environmental files
+.env
+.env.local
+.env.*.local

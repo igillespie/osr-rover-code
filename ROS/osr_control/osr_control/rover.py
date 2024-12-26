@@ -379,7 +379,7 @@ class Rover(Node):
         approx_turning_radius = sum(sorted([r_front_farthest, r_front_closest, r_back_farthest, r_back_closest])[1:3])/2.0
         if math.isnan(approx_turning_radius):
             approx_turning_radius = self.max_radius
-        self.get_logger().debug("Current approximate turning radius: {}".format(round(approx_turning_radius, 2)), throttle_duration_sec=1)
+        self.get_logger().debig("Current approximate turning radius: {}".format(round(approx_turning_radius, 2)), throttle_duration_sec=1)
         self.curr_turning_radius = approx_turning_radius
 
         # we know that the linear velocity in x direction is the instantaneous velocity of the middle virtual

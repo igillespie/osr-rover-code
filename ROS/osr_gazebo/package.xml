@@ -24,8 +24,9 @@
   <exec_depend>control_msgs</exec_depend>
   <exec_depend>effort_controllers</exec_depend>
   <exec_depend>geometry_msgs</exec_depend>
-  <exec_depend>gazebo_ros2_control</exec_depend>
-  <exec_depend>gazebo_ros</exec_depend>
+  <!-- These were preventing building, so removing for time being -->
+  <!-- <exec_depend>gazebo_ros2_control</exec_depend> -->
+  <!-- <exec_depend>gazebo_ros</exec_depend> -->
   <exec_depend>hardware_interface</exec_depend>
   <exec_depend>joint_trajectory_controller</exec_depend>
   <exec_depend>launch</exec_depend>
