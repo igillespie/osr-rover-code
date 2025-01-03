@@ -95,7 +95,7 @@ class Rover(Node):
         :param intuitive: determines the mode
         """
         # check if we're supposed to rotate in place
-        if twist_msg.angular.y and not twist_msg.linear.x:
+        if twist_msg.angular.y and not twist_msg.linear.x and abs(twist_msg.angular.y) > self.no_cmd_thresh:
             # command corners to point to center
             corner_cmd_msg, drive_cmd_msg = self.calculate_rotate_in_place_cmd(twist_msg)
 
@@ -117,6 +117,7 @@ class Rover(Node):
         self.get_logger().debug("drive cmd:\n{}".format(drive_cmd_msg), throttle_duration_sec=1)
         self.get_logger().debug("corner cmd:\n{}".format(corner_cmd_msg), throttle_duration_sec=1)
 
+        
         self.corner_cmd_pub.publish(corner_cmd_msg)
         self.drive_cmd_pub.publish(drive_cmd_msg)
 
@@ -160,7 +161,7 @@ class Rover(Node):
             transform_msg.transform.rotation = self.odometry.pose.pose.orientation
             self.tf_pub.sendTransform(transform_msg)
 
-    def corner_cmd_threshold(self, corner_cmd):
+    def corner_cmd_threshold_exceeded(self, corner_cmd):
         try:
             if abs(corner_cmd.left_front_pos - self.curr_positions["corner_left_front"]) > self.no_cmd_thresh:
                 return True
@@ -276,10 +277,16 @@ class Rover(Node):
         """
         # TODO these are always the same, should use cache or calculate on parameter change
         corner_cmd = CommandCorner()
-        corner_cmd.left_front_pos = math.atan(self.d3/self.d1)
-        corner_cmd.left_back_pos = -corner_cmd.left_front_pos
-        corner_cmd.right_back_pos = math.atan(self.d2/self.d1)
-        corner_cmd.right_front_pos = -corner_cmd.right_back_pos
+        # corner_cmd.left_front_pos = math.atan(self.d3/self.d1)
+        # corner_cmd.left_back_pos = -corner_cmd.left_front_pos
+        # corner_cmd.right_back_pos = math.atan(self.d2/self.d1)
+        # corner_cmd.right_front_pos = -corner_cmd.right_back_pos
+
+        corner_cmd.left_front_pos = 0.8
+        corner_cmd.left_back_pos = -0.6
+        corner_cmd.right_back_pos = 0.8
+        corner_cmd.right_front_pos = -0.6
+        
 
         drive_cmd = CommandDrive()
         angular_vel = twist.angular.y
@@ -379,7 +386,7 @@ class Rover(Node):
         approx_turning_radius = sum(sorted([r_front_farthest, r_front_closest, r_back_farthest, r_back_closest])[1:3])/2.0
         if math.isnan(approx_turning_radius):
             approx_turning_radius = self.max_radius
-        self.get_logger().debig("Current approximate turning radius: {}".format(round(approx_turning_radius, 2)), throttle_duration_sec=1)
+        self.get_logger().debug("Current approximate turning radius: {}".format(round(approx_turning_radius, 2)), throttle_duration_sec=1)
         self.curr_turning_radius = approx_turning_radius
 
         # we know that the linear velocity in x direction is the instantaneous velocity of the middle virtual

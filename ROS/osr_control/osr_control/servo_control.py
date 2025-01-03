@@ -34,7 +34,7 @@ class ServoWrapper(Node):
         self.servo_actuation_range = 300  # [deg]
         self.centered_pulse_widths = self.get_parameter('centered_pulse_widths').get_parameter_value().integer_array_value
         assert(len(self.centered_pulse_widths) == 4)
-        self.pulse_width_range = (500, 2500)  # [microsec]
+        self.pulse_width_range = (1000, 2000)  # [microsec]
         self.deg_per_sec = 200
         # initial values for position estimate (first element) and goal (second element) for each corner motor in deg
         self.corner_state_goal = [(0, 0)] * 4
@@ -54,10 +54,10 @@ class ServoWrapper(Node):
         self.log.info("setting servo params")
         for servo_id in range(4):
             self.kit.servo[servo_id].actuation_range = self.servo_actuation_range
-            self.kit.servo[servo_id].set_pulse_width_range(*self.pulse_width_range)
+            #self.kit.servo[servo_id].set_pulse_width_range(*self.pulse_width_range)
 
     def corner_cmd_cb(self, cmd: CommandCorner):
-        self.log.debug(f"Received corner command message: {cmd}")
+        #self.log.info(f"Received corner command message: {cmd}", throttle_duration_sec=1)
         if not self.kit:
             self.log.error("ServoKit not instantiated yet, dropping cmd", throttle_duration_sec=5)
             return
@@ -69,8 +69,8 @@ class ServoWrapper(Node):
             self.corner_state_goal[ind] = (self.corner_state_goal[ind][0], angle)
             # offset to coordinate frame where x points to the middle of the rover, z down
             # and apply middle of actuation range offset, taking into account if servo is positive ccw or cw
-            angle = self.centered_pulse_widths[ind] + self.servo_direction * angle
-            self.log.debug(f"motor {corner_name} commanded to {angle}")
+            angle = self.centered_pulse_widths[ind] + (self.servo_direction * angle)
+            #self.log.info(f"motor {corner_name} commanded to {angle}")
             # limit to operating range of servo
             angle = max(min(angle, self.servo_actuation_range), 0)
             # send to motor

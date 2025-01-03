@@ -152,7 +152,7 @@ class RoboclawWrapper(Node):
         # set up publishers and subscribers
         self.drive_cmd_sub = self.create_subscription(CommandDrive, "/cmd_drive", self.drive_cmd_cb, 1)
         self.enc_pub = self.create_publisher(JointState, "/drive_state", 1)
-        self.status_pub = self.create_publisher(Status, "/status", 1)
+        self.status_pub = self.create_publisher(Status, "/motor_controllers/status", 1)
 
         self.status = Status()
         fast_loop_rate = 0.125  # seconds
@@ -501,9 +501,10 @@ class RoboclawWrapper(Node):
                     self.log.error(f"Motor controller {self.address[i]} reported error code {err[i]} (hex: {hex(err_int)}),{err_string}")
                 else:
                     self.log.warn(f"Motor controller {self.address[i]} reported warning code {err[i]} (hex: {hex(err_int)}), {err_string}")
+                    self.log.warn(f"voltage {self.read_battery()}")
+                    self.log.warn(f"currents {self.read_currents()}")
 
         return err
-
     def decode_error(self, err_int):
         """ Decodes error codes according to RoboClaw user manual, pg. 73 """
 

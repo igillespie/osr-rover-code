@@ -34,7 +34,7 @@ def generate_launch_description():
         )
     )
     ld.add_action(
-        DeclareLaunchArgument('enable_odometry', default_value='false')
+        DeclareLaunchArgument('enable_odometry', default_value='true')
     )
     ld.add_action(
         Node(
@@ -44,11 +44,11 @@ def generate_launch_description():
             output='screen',
             emulate_tty=True,
             respawn=True,
-            parameters=[{'centered_pulse_widths': [160, 150, 145, 150]}]  # pulse width where the corner motors are in their default position, see rover_bringup.md.
+            parameters=[{'centered_pulse_widths': [150, 155, 146, 150]}]  # pulse width where the corner motors are in their default position, see rover_bringup.md.
         )
     )
     ld.add_action(
-        DeclareLaunchArgument('enable_odometry', default_value='false')
+        DeclareLaunchArgument('enable_odometry', default_value='true')
     )
     ld.add_action(
         Node(
@@ -72,15 +72,15 @@ def generate_launch_description():
             respawn=True,
             parameters=[
                 # {"scale_linear.x": 0.4},  # scale to apply to drive speed, in m/s: drive_motor_rpm * 2pi / 60 * wheel radius * slowdown_factor
-                {"scale_linear.x": 0.3},  # scale to apply to drive speed, in m/s: drive_motor_rpm * 2pi / 60 * wheel radius * slowdown_factor
+                {"scale_linear.x": 0.9},  # scale to apply to drive speed, in m/s: drive_motor_rpm * 2pi / 60 * wheel radius * slowdown_factor
                 # {"axis_linear.x": 4},
                 {"axis_linear.x": 4},
                 # {"axis_angular.yaw": 0},  # which joystick axis to use for driving
                 {"axis_angular.yaw": 3},  # which joystick axis to use for driving
                 # {"scale_angular.yaw": 1.25},  # scale to apply to angular speed, in rad/s: scale_linear / min_radius(=0.45m)
                 {"axis_angular.pitch": 0},  # axis to use for in-place rotation
-                {"scale_angular.yaw": 0.1},  # scale to apply to angular speed, in rad/s: scale_linear / min_radius(=0.45m)
-                {"scale_angular.pitch": 0.1},  # scale to apply to angular speed, in rad/s: scale_linear / min_radius(=0.45m)
+                {"scale_angular.yaw": 1.5},  # scale to apply to angular speed, in rad/s: scale_linear / min_radius(=0.45m)
+                {"scale_angular.pitch": 2.25},  # scale to apply to angular speed, in rad/s: scale_linear / min_radius(=0.45m)
                 {"scale_angular_turbo.yaw": 3.95},  # scale to apply to angular speed, in rad/s: scale_linear_turbo / min_radius
                 {"scale_linear_turbo.x": 1.78},  # scale to apply to linear speed, in m/s
                 # {"enable_button": 4},  # which button to press to enable movement
