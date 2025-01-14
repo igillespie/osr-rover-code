@@ -44,7 +44,7 @@ def generate_launch_description():
             output='screen',
             emulate_tty=True,
             respawn=True,
-            parameters=[{'centered_pulse_widths': [150, 155, 146, 150]}]  # pulse width where the corner motors are in their default position, see rover_bringup.md.
+            parameters=[{'centered_pulse_widths': [142, 150, 145, 145]}]  # pulse width where the corner motors are in their default position, see rover_bringup.md.
         )
     )
     ld.add_action(

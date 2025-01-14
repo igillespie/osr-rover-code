@@ -95,7 +95,7 @@ class Rover(Node):
         :param intuitive: determines the mode
         """
         # check if we're supposed to rotate in place
-        if twist_msg.angular.y and not twist_msg.linear.x and abs(twist_msg.angular.y) > self.no_cmd_thresh:
+        if (twist_msg.angular.y and not twist_msg.linear.x and abs(twist_msg.angular.y) > self.no_cmd_thresh) or (not intuitive and twist_msg.angular.z and not twist_msg.linear.x):
             # command corners to point to center
             corner_cmd_msg, drive_cmd_msg = self.calculate_rotate_in_place_cmd(twist_msg)
 
@@ -277,15 +277,15 @@ class Rover(Node):
         """
         # TODO these are always the same, should use cache or calculate on parameter change
         corner_cmd = CommandCorner()
-        # corner_cmd.left_front_pos = math.atan(self.d3/self.d1)
-        # corner_cmd.left_back_pos = -corner_cmd.left_front_pos
-        # corner_cmd.right_back_pos = math.atan(self.d2/self.d1)
-        # corner_cmd.right_front_pos = -corner_cmd.right_back_pos
+        corner_cmd.left_front_pos = math.atan(self.d3/self.d1)
+        corner_cmd.left_back_pos = -corner_cmd.left_front_pos
+        corner_cmd.right_back_pos = math.atan(self.d2/self.d1)
+        corner_cmd.right_front_pos = -corner_cmd.right_back_pos
 
-        corner_cmd.left_front_pos = 0.8
-        corner_cmd.left_back_pos = -0.6
-        corner_cmd.right_back_pos = 0.8
-        corner_cmd.right_front_pos = -0.6
+        # corner_cmd.left_front_pos = 0.8
+        # corner_cmd.left_back_pos = -0.5
+        # corner_cmd.right_back_pos = 0.8
+        # corner_cmd.right_front_pos = -0.48
         
 
         drive_cmd = CommandDrive()

@@ -31,3 +31,6 @@ if __name__ == '__main__':
     kit.servo[args.motor_index].set_pulse_width_range(500, 2500)
     kit.servo[args.motor_index].angle = args.target_angle
     print(f"Servo motor at channel {args.motor_index} was set to {args.target_angle}")
+    print(f"Actuation Range: {kit.servo[args.motor_index].actuation_range}")
+    print(f"Pulse Width Range: 500–2500 μs")
+    print(f"Fraction: {args.target_angle / kit.servo[args.motor_index].actuation_range}")
